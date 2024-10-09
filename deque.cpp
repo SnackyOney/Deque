@@ -29,6 +29,36 @@ class Deque {
     ++size_;
   }
 
+  void PopBack() {
+    if (size_ <= 0) {
+      throw std::out_of_range("Out of range");
+    }
+    if (size_ == 1) {
+      FromOneToZero();
+      return;
+    }
+    Node* holder = end_;
+    end_ = end_->prev_node;
+    delete holder;
+    end_->next_node = nullptr;
+    --size_;
+  }
+
+  void PopFront() {
+    if (size_ <= 0) {
+      throw std::out_of_range("Out of range");
+    }
+    if (size_ == 1) {
+      FromOneToZero();
+      return;
+    }
+    Node* holder = begin_;
+    begin_ = begin_->next_node;
+    delete holder;
+    begin_->prev_node = nullptr;
+    --size_;
+  }
+
   T Front() {
     if (size_ > 0) {
       return begin_->value;
@@ -51,6 +81,8 @@ class Deque {
     }
     std::cout << '\n';
   }
+
+  bool Empty() { return (size_ <= 0); }
 
   ~Deque() {
     if (size_ == 0) {
@@ -76,17 +108,14 @@ class Deque {
     end_ = begin_;
     size_ = 1;
   }
+  void FromOneToZero() {
+    Node* holder = begin_;
+    delete holder;
+    begin_ = nullptr;
+    end_ = nullptr;
+    size_ = 0;
+  }
   Node* begin_ = nullptr;
   Node* end_ = nullptr;  // end points at the last element
   size_t size_ = 0;
 };
-
-int main() {
-  Deque<int> deq;
-  deq.PushBack(1);
-  deq.PushFront(4);
-  deq.PushBack(22);
-  deq.PushFront(2);
-  std::cout << deq.Back() << ' ' << deq.Front() << '\n';
-  deq.Traverse();
-}
